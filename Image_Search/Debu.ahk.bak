@@ -1,0 +1,61 @@
+﻿#Include Gdip_ImageSearch.ahk
+#Include Gdip_all.ahk
+SetBatchLines, -1
+SetWorkingDir, %A_WorkingDir%
+
+file=%a_scriptdir%\test.png
+caminho=%a_scriptdir%\imagens\login2.jpg
+return=
+
+/*
+Gdip_ImageSearch(pBitmapHaystack,pBitmapNeedle,ByRef OutputList=""
+,OuterX1=0,OuterY1=0,OuterX2=0,OuterY2=0,Variation=0,Trans=""
+,SearchDirection=1,Instances=1,LineDelim="`n",CoordDelim=",")
+*/
+
+ImageSearch_Inactive(Title, ImgFileName, ByRef vx, ByRef vy)
+{
+ If !pToken := Gdip_Startup()
+ {
+  MsgBox, 48, gdiplus error!, Gdiplus failed to start. Please ensure you have gdiplus on your system
+  ExitApp
+ }
+
+WinGetPos , , , Width, Height, Title
+ 
+ pBitmapHayStack := Gdip_BitmapFromHWND(hwnd := WinExist(Title)) 
+ pBitmapNeedle := Gdip_CreateBitmapFromFile(ImgFileName)
+ oFile:=a_scriptdir "\haystack.png"
+ Gdip_SaveBitmapToFile(pBitmapHayStack, oFile)
+
+ 
+
+ result := Gdip_ImageSearch(pBitmapHayStack,pBitmapNeedle,list,0,0,Width, Height,60,,1,1)
+;msgbox, % pBitmapNeedle "`n" pBitmapHayStack
+ 
+
+
+if (result) {  
+StringSplit, LISTArray, LIST, `,  
+vx:=LISTArray1 ]
+vy:=LISTArray2
+ 
+ Gdip_DisposeImage(pBitmapHayStack), Gdip_DisposeImage(pBitmapNeedle)
+ Gdip_Shutdown(pToken)
+ return true
+}
+
+else
+{
+Gdip_DisposeImage(pBitmapHayStack), Gdip_DisposeImage(pBitmapNeedle)
+Gdip_Shutdown(pToken)
+return false
+}
+}
+
+/* LOGIN 
+*/
+Numpad1::
+ImageSearch_Inactive("Hero Zero",caminho,loginx,loginy)
+MsgBox, %loginx% / %loginy%
+return
